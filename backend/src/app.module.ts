@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module'
 import { EdificiosModule } from './edificios/edificios.module'
 import { EquipamientoModule } from './equipamiento/equipamiento.module'
 import { EspaciosModule } from './espacios/espacios.module'
+import { ReservasModule } from './reservas/reservas.module'
 import { SaludController } from './salud.controller'
 
 @Module({
@@ -23,6 +24,7 @@ import { SaludController } from './salud.controller'
     EdificiosModule,
     EquipamientoModule,
     EspaciosModule,
+    ReservasModule,
   ],
   controllers: [SaludController],
   providers: [{ provide: APP_FILTER, useClass: FiltroErrores }],
