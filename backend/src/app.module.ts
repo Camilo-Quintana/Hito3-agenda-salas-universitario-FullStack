@@ -7,6 +7,9 @@ import { leerEntorno } from './config/entorno'
 import { FiltroErrores } from './common/filtro-errores'
 import { ActividadModule } from './actividad/actividad.module'
 import { AuthModule } from './auth/auth.module'
+import { EdificiosModule } from './edificios/edificios.module'
+import { EquipamientoModule } from './equipamiento/equipamiento.module'
+import { EspaciosModule } from './espacios/espacios.module'
 import { SaludController } from './salud.controller'
 
 @Module({
@@ -17,6 +20,9 @@ import { SaludController } from './salud.controller'
     MongooseModule.forRootAsync({ useFactory: () => ({ uri: leerEntorno().mongoUri, serverSelectionTimeoutMS: 5000 }) }),
     ActividadModule,
     AuthModule,
+    EdificiosModule,
+    EquipamientoModule,
+    EspaciosModule,
   ],
   controllers: [SaludController],
   providers: [{ provide: APP_FILTER, useClass: FiltroErrores }],
