@@ -11,6 +11,7 @@ import { EdificiosModule } from './edificios/edificios.module'
 import { EquipamientoModule } from './equipamiento/equipamiento.module'
 import { EspaciosModule } from './espacios/espacios.module'
 import { ReservasModule } from './reservas/reservas.module'
+import { IndicadoresModule } from './indicadores/indicadores.module'
 import { SaludController } from './salud.controller'
 
 @Module({
@@ -25,6 +26,7 @@ import { SaludController } from './salud.controller'
     EquipamientoModule,
     EspaciosModule,
     ReservasModule,
+    IndicadoresModule,
   ],
   controllers: [SaludController],
   providers: [{ provide: APP_FILTER, useClass: FiltroErrores }],
