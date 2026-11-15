@@ -1,0 +1,804 @@
+/* =====================================================
+   PANEL DE INDICADORES
+   Tablero institucional: dos áreas lado a lado, mosaicos blancos planos con poca separación,
+   bordes finos, esquinas casi rectas y el burdeo UNAB como color de las series simples.
+===================================================== */
+.indicadores {
+  --ind-serie: var(--color-primario); /* burdeo UNAB */
+  --ind-serie-suave: rgba(122, 17, 40, 0.045); /* área bajo la línea: apenas un velo */
+  --ind-pista: rgba(122, 17, 40, 0.12); /* fondo de los medidores: tono claro del mismo color */
+  --ind-superficie: #fff;
+  --ind-borde: #e8eaee; /* gris suave para los contenedores */
+  --ind-sombra: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.04);
+  --ind-guia: #eceef1;
+  --ind-eje: #c9ccd2;
+  --ind-tinta: #1f2328;
+  --ind-tinta-2: #4b5260;
+  --ind-tinta-3: #6b7280;
+  --ind-radio: 4px;
+  --ind-separacion: 16px; /* espacio entre mosaicos */
+
+  font-family: "Inter Variable", "Inter", var(--fuente-base);
+  color: var(--ind-tinta);
+}
+
+.indicadores.actualizando .ind-tablero {
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+/* ---------- Barra superior ---------- */
+.ind-barra {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-top: 3px solid var(--ind-serie);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+}
+
+.ind-barra__titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.ind-barra__periodo {
+  font-size: 0.8rem;
+  color: var(--ind-tinta-3);
+  margin: 0.1rem 0 0;
+}
+
+.ind-filtro {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.ind-filtro__etiqueta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ind-tinta-3);
+}
+
+.ind-filtro .btn {
+  border-radius: 0;
+  font-weight: 500;
+  min-width: 4.5rem;
+}
+
+.ind-filtro .btn-group > .btn:first-child {
+  border-radius: var(--ind-radio) 0 0 var(--ind-radio);
+}
+
+.ind-filtro .btn-group > .btn:last-child {
+  border-radius: 0 var(--ind-radio) var(--ind-radio) 0;
+}
+
+.ind-filtro .btn-outline-secondary {
+  --bs-btn-color: var(--ind-tinta-2);
+  --bs-btn-border-color: var(--ind-borde);
+  --bs-btn-bg: var(--ind-superficie);
+  --bs-btn-hover-bg: #f3f4f6;
+  --bs-btn-hover-color: var(--ind-tinta);
+  --bs-btn-hover-border-color: var(--ind-borde);
+}
+
+/* ---------- Composición del tablero ---------- */
+.ind-tablero {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.ind-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ind-separacion);
+  min-width: 0;
+}
+
+/* título grande y centrado de cada área */
+.ind-area__titulo {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+}
+
+.ind-mosaicos {
+  display: grid;
+  gap: var(--ind-separacion);
+}
+
+.ind-mosaicos--horario {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+.ind-mosaicos--mitades {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.ind-pila {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--ind-separacion);
+}
+
+/* ---------- Mosaico de gráfico ---------- */
+.ind-panel {
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ind-panel__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.35rem 0.35rem;
+}
+
+.ind-panel__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ind-panel__subtitulo {
+  font-size: 0.74rem;
+  color: var(--ind-tinta-3);
+  margin: 0.1rem 0 0;
+}
+
+.ind-panel__cuerpo {
+  padding: 1rem 1.35rem 1.15rem;
+  flex-grow: 1;
+}
+
+.ind-panel__fuente {
+  font-size: 0.68rem;
+  color: var(--ind-tinta-3);
+  margin: 0;
+  padding: 0.6rem 1.35rem 0.7rem;
+  border-top: 1px solid var(--ind-guia);
+}
+
+.ind-vacio {
+  font-size: 0.85rem;
+  color: var(--ind-tinta-3);
+  margin: 0;
+}
+
+.ind-variacion {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ind-variacion.positivo {
+  color: #157347;
+}
+
+.ind-variacion.negativo {
+  color: #b42318;
+}
+
+.ind-variacion.neutro {
+  color: var(--ind-tinta-2);
+}
+
+/* ---------- Cifra central (número grande) ---------- */
+.ind-cifra {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem 1.25rem;
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+}
+
+.ind-cifra__valor {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.4rem;
+}
+
+.ind-cifra__etiqueta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ind-cifra__detalle {
+  font-size: 0.72rem;
+  color: var(--ind-tinta-3);
+  margin: 0.25rem 0 0;
+}
+
+/* ---------- Medidores (cancelación y rechazo) ---------- */
+.ind-medidores {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem;
+}
+
+.ind-medidor__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.35rem;
+}
+
+.ind-medidor__etiqueta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ind-tinta-2);
+}
+
+.ind-medidor__valor {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ind-medidor__pista {
+  height: 22px;
+  background: var(--ind-pista);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ind-medidor__relleno {
+  display: block;
+  height: 100%;
+  background: var(--ind-serie);
+  transition: width 0.3s ease;
+}
+
+.ind-medidor__escala {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--ind-tinta-3);
+  margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-medidor__descripcion {
+  font-size: 0.72rem;
+  color: var(--ind-tinta-3);
+  margin: 0.25rem 0 0;
+}
+
+.ind-pendientes {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  text-decoration: none;
+  color: var(--ind-tinta);
+  white-space: nowrap;
+}
+
+.ind-pendientes:hover {
+  border-color: var(--ind-serie);
+  color: var(--ind-tinta);
+}
+
+.ind-pendientes__numero {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ind-serie);
+}
+
+.ind-pendientes__texto {
+  font-size: 0.68rem;
+  line-height: 1.2;
+  color: var(--ind-tinta-2);
+}
+
+/* ---------- Dona (reservas por estado) ---------- */
+.ind-dona {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ind-dona__leyenda {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-grow: 1;
+  max-width: 260px;
+  font-size: 0.82rem;
+}
+
+.ind-dona__leyenda li {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  column-gap: 0.25rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--ind-guia);
+  cursor: default;
+  transition: opacity 0.15s;
+}
+
+.ind-dona__leyenda li.atenuada {
+  opacity: 0.45;
+}
+
+.ind-dona__nombre {
+  font-weight: 600;
+}
+
+.ind-dona__cantidad,
+.ind-dona__porcentaje {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-dona__cantidad {
+  color: var(--ind-tinta-3);
+  min-width: 2.75rem;
+}
+
+.ind-dona__porcentaje {
+  font-weight: 600;
+  min-width: 3.5rem;
+}
+
+.ind-dona__grafico {
+  flex-shrink: 0;
+}
+
+.ind-dona__grafico path {
+  transition: opacity 0.15s;
+}
+
+.ind-dona__total {
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--ind-tinta);
+  letter-spacing: -0.02em;
+}
+
+.ind-dona__rotulo {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: var(--ind-tinta-3);
+}
+
+/* ---------- Barras horizontales ---------- */
+.ind-barras__fila {
+  display: grid;
+  grid-template-columns: 5.75rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 1.9rem;
+}
+
+.ind-barras__nombre {
+  font-size: 0.8rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ind-barras__pista {
+  position: relative;
+  height: 1.9rem;
+  margin-right: 2.75rem; /* lugar para el valor de la barra más larga */
+}
+
+.ind-barras__guia {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--ind-guia);
+}
+
+.ind-barras__guia:first-child {
+  background: var(--ind-eje);
+}
+
+.ind-barras__barra {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 16px;
+  transform: translateY(-50%);
+  background: var(--ind-serie);
+  border-radius: 0 4px 4px 0;
+  min-width: 1px;
+  transition: width 0.3s ease;
+}
+
+.ind-barras__valor {
+  position: absolute;
+  top: 50%;
+  transform: translate(0.35rem, -50%);
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: left 0.3s ease;
+}
+
+.ind-barras__complemento {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-barras__fila--eje {
+  min-height: 1.1rem;
+}
+
+.ind-barras__eje {
+  position: relative;
+  height: 1.1rem;
+  margin-right: 2.75rem;
+}
+
+.ind-barras__eje span {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  color: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-barras__eje span:first-child {
+  transform: none;
+}
+
+/* ---------- Gráficos SVG (columnas y línea) ---------- */
+.ind-grafico {
+  position: relative;
+  width: 100%;
+}
+
+.ind-grafico svg {
+  display: block;
+  overflow: visible;
+}
+
+.ind-guia {
+  stroke: var(--ind-guia);
+  stroke-width: 1;
+}
+
+.ind-eje {
+  stroke: var(--ind-eje);
+  stroke-width: 1;
+}
+
+.ind-texto-eje {
+  font-size: 11px;
+  fill: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-texto-eje--titulo {
+  font-size: 10.5px;
+  font-style: italic;
+}
+
+.ind-texto-valor {
+  font-size: 11.5px;
+  font-weight: 700;
+  fill: var(--ind-tinta);
+}
+
+.ind-texto-valor--suave {
+  font-weight: 500;
+  fill: var(--ind-tinta-2);
+}
+
+.ind-columna {
+  fill: var(--ind-serie);
+  transition: opacity 0.15s;
+}
+
+.ind-columna.atenuada {
+  opacity: 0.35;
+}
+
+.ind-zona {
+  fill: transparent;
+}
+
+.ind-zona.activa {
+  fill: rgba(31, 35, 40, 0.04);
+}
+
+.ind-linea {
+  fill: none;
+  stroke: var(--ind-serie);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.ind-area-linea {
+  fill: var(--ind-serie-suave);
+}
+
+.ind-cruce {
+  stroke: var(--ind-eje);
+  stroke-width: 1;
+}
+
+.ind-punto {
+  fill: var(--ind-serie);
+  stroke: var(--ind-superficie);
+  stroke-width: 2;
+}
+
+.ind-tooltip {
+  position: absolute;
+  z-index: 2;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  color: var(--ind-tinta);
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.ind-tooltip strong {
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+.ind-tooltip__fila {
+  display: flex;
+  align-items: center;
+  color: var(--ind-tinta-2);
+}
+
+/* ---------- Muestra de color ---------- */
+.ind-muestra {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  vertical-align: -1px;
+  flex-shrink: 0;
+}
+
+/* ---------- Tablas ---------- */
+.ind-tabla {
+  --bs-table-bg: transparent;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ind-tinta);
+}
+
+.ind-tabla > :not(caption) > * > * {
+  padding: 0.38rem 0.5rem;
+  border-bottom-color: var(--ind-guia);
+}
+
+.ind-tabla thead th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ind-tinta-2);
+  background: #f6f7f9;
+  border-bottom: 1px solid var(--ind-eje);
+  white-space: nowrap;
+}
+
+.ind-tabla tbody th {
+  font-weight: 500;
+}
+
+.ind-tabla tfoot th,
+.ind-tabla tfoot td {
+  font-weight: 700;
+  border-top: 1px solid var(--ind-eje);
+  border-bottom: 0;
+}
+
+.ind-tabla tbody tr:hover > td,
+.ind-tabla tbody tr:hover > th:not([scope="rowgroup"]) {
+  background: #fafafb;
+}
+
+.ind-abreviatura {
+  text-decoration: none;
+  cursor: help;
+}
+
+.ind-cero {
+  color: #b7bcc5;
+}
+
+.ind-tabla-desplazable {
+  max-height: 260px;
+  overflow: auto;
+  margin-top: 0.75rem;
+}
+
+.ind-tabla-desplazable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* tabla del ranking: grupos plegables y celdas con tono según ocupación */
+.ind-tabla-espacios > :not(caption) > * > * {
+  padding: 0.6rem 0.65rem;
+  border-bottom-color: #e4e6ea;
+}
+
+.ind-tabla-espacios thead th {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: #3a3f47;
+  border-bottom: 0;
+}
+
+.ind-tabla-espacios thead th:first-child {
+  border-top-left-radius: 3px;
+}
+
+.ind-tabla-espacios thead th:last-child {
+  border-top-right-radius: 3px;
+}
+
+.ind-tabla-espacios__posicion {
+  color: var(--ind-tinta-3);
+  width: 2.75rem;
+}
+
+.ind-tabla-espacios__grupo > th {
+  font-size: 0.78rem;
+  font-weight: 700 !important;
+  color: var(--ind-tinta);
+  background: #f3f4f6 !important;
+  padding-top: 0.55rem !important;
+  padding-bottom: 0.55rem !important;
+  border-bottom: 1px solid #d5d8dd !important;
+}
+
+.ind-tabla-espacios__grupo + tr > * {
+  padding-top: 0.7rem;
+}
+
+.ind-tabla-espacios__cantidad {
+  margin-left: 0.5rem;
+  font-weight: 500;
+  color: var(--ind-tinta-3);
+}
+
+.ind-tabla-espacios__nombre {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ind-celda-tono {
+  font-weight: 600;
+  width: 6rem;
+  border-bottom: 2px solid #fff !important; /* separa las celdas de color */
+}
+
+.ind-tabla-espacios tbody tr:hover > .ind-celda-tono {
+  background: inherit;
+}
+
+.ind-plegar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 0.4rem;
+  padding: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: #fff;
+  background: var(--ind-tinta-2);
+  border: 0;
+  border-radius: 2px;
+  vertical-align: -2px;
+}
+
+.ind-plegar:hover {
+  background: var(--ind-serie);
+}
+
+/* ---------- Pantallas medianas y chicas ---------- */
+@media (max-width: 1199.98px) {
+  .ind-tablero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .ind-mosaicos--horario,
+  .ind-mosaicos--mitades,
+  .ind-medidores {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ind-pila {
+    grid-template-rows: none;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ind-cifra__valor {
+    font-size: 2rem;
+  }
+
+  .ind-dona {
+    flex-direction: column-reverse;
+  }
+
+  .ind-dona__leyenda {
+    max-width: none;
+    width: 100%;
+  }
+
+  .ind-col-tipo,
+  .ind-col-edif {
+    display: none;
+  }
+
+  .ind-celda-tono {
+    width: auto;
+  }
+
+  .ind-tabla-espacios__nombre {
+    white-space: normal;
+  }
+
+}

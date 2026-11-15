@@ -10,6 +10,12 @@ import PerfilPage from './pages/PerfilPage.jsx'
 import IngresarPage from './pages/IngresarPage.jsx'
 import RegistroPage from './pages/RegistroPage.jsx'
 import NoEncontradoPage from './pages/NoEncontradoPage.jsx'
+import AdminLayout from './pages/admin/AdminLayout.jsx'
+import PanelPage from './pages/admin/PanelPage.jsx'
+import SolicitudesPage from './pages/admin/SolicitudesPage.jsx'
+import EspaciosAdminPage from './pages/admin/EspaciosAdminPage.jsx'
+import EdificiosAdminPage from './pages/admin/EdificiosAdminPage.jsx'
+import ActividadPage from './pages/admin/ActividadPage.jsx'
 
 // Solo rutas y estructura. Los datos los pide cada página a la API (hook useApi)
 // y la sesión la comparte el contexto de ProveedorSesion (main.jsx).
@@ -46,6 +52,20 @@ function App() {
               </RutaProtegida>
             }
           />
+          <Route
+            path="/admin"
+            element={
+              <RutaProtegida soloAdmin>
+                <AdminLayout />
+              </RutaProtegida>
+            }
+          >
+            <Route index element={<PanelPage />} />
+            <Route path="solicitudes" element={<SolicitudesPage />} />
+            <Route path="espacios" element={<EspaciosAdminPage />} />
+            <Route path="edificios" element={<EdificiosAdminPage />} />
+            <Route path="actividad" element={<ActividadPage />} />
+          </Route>
           <Route path="*" element={<NoEncontradoPage />} />
         </Routes>
       </main>

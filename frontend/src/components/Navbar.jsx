@@ -6,12 +6,13 @@ import './Navbar.css'
 
 // Barra de arriba. Los enlaces cambian según la sesión y el rol. En celular el menú se abre con un botón.
 function Navbar() {
-  const { usuario, salir } = useSesion()
+  const { usuario, esAdmin, salir } = useSesion()
   const [menuAbierto, setMenuAbierto] = useState(false)
   const cerrarMenu = () => setMenuAbierto(false)
 
   const enlaces = [{ ruta: '/', texto: 'Espacios', icono: 'bi-grid' }]
   if (usuario) enlaces.push({ ruta: '/mis-reservas', texto: 'Mis reservas', icono: 'bi-bookmark-check' })
+  if (esAdmin) enlaces.push({ ruta: '/admin', texto: 'Administración', icono: 'bi-speedometer2' })
   if (usuario) enlaces.push({ ruta: '/perfil', texto: 'Mi perfil', icono: 'bi-person-circle' })
   else enlaces.push({ ruta: '/ingresar', texto: 'Ingresar', icono: 'bi-box-arrow-in-right' })
 
