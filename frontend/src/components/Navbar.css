@@ -110,3 +110,38 @@
     display: none;
   }
 }
+
+/* En pantallas anchas hay espacio: más aire entre la marca, el saludo y los enlaces */
+@media (min-width: 1200px) {
+  .navbar-unab__barra {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .navbar-unab__marca {
+    gap: 1rem;
+  }
+
+  .navbar-unab__menu {
+    gap: 2rem;
+  }
+
+  .navbar-unab__saludo {
+    padding-right: 2rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .navbar-unab__enlaces {
+    gap: 1.75rem;
+  }
+}
+
+/* "Salir" es un botón, pero se ve igual que los enlaces */
+.navbar-unab__salir {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 0 4px;
+  font: inherit;
+  font-weight: 500;
+}
