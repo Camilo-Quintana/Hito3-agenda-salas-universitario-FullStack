@@ -234,3 +234,17 @@ body {
 .tabla-admin td {
   vertical-align: middle;
 }
+
+/* Pestañas de administración: en celular pasan a varias líneas para que se vean las 5 secciones;
+   desde tablet quedan en una sola línea (con scroll lateral si no caben). */
+.admin-secciones {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .admin-secciones {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+}
