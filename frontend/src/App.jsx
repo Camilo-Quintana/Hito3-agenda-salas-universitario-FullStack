@@ -2,18 +2,18 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import RutaProtegida from './components/RutaProtegida.jsx'
 import EspaciosPage from './pages/EspaciosPage.jsx'
 import DetalleEspacioPage from './pages/DetalleEspacioPage.jsx'
 import MisReservasPage from './pages/MisReservasPage.jsx'
 import PerfilPage from './pages/PerfilPage.jsx'
+import IngresarPage from './pages/IngresarPage.jsx'
+import RegistroPage from './pages/RegistroPage.jsx'
 import NoEncontradoPage from './pages/NoEncontradoPage.jsx'
-import { useReservas } from './hooks/useReservas.js'
-import { usePerfil } from './hooks/usePerfil.js'
 
+// Solo rutas y estructura. Los datos los pide cada página a la API (hook useApi)
+// y la sesión la comparte el contexto de ProveedorSesion (main.jsx).
 function App() {
-  // Las reservas y el perfil se usan en varias páginas: viven aquí y bajan por props
-  const { reservas, agregarReserva, cancelarReserva, restablecerReservas } = useReservas()
-  const { perfil, guardarPerfil } = usePerfil()
   const { pathname } = useLocation()
 
   // Cada vez que cambia la ruta, volvemos al inicio de la página
@@ -23,21 +23,28 @@ function App() {
 
   return (
     <div className="app">
-      <Navbar perfil={perfil} />
+      <Navbar />
       <main className="app-contenido container">
         <Routes>
-          <Route path="/" element={<EspaciosPage reservas={reservas} />} />
-          <Route
-            path="/espacios/:id"
-            element={<DetalleEspacioPage reservas={reservas} perfil={perfil} onReservar={agregarReserva} />}
-          />
+          <Route path="/" element={<EspaciosPage />} />
+          <Route path="/espacios/:id" element={<DetalleEspacioPage />} />
+          <Route path="/ingresar" element={<IngresarPage />} />
+          <Route path="/registro" element={<RegistroPage />} />
           <Route
             path="/mis-reservas"
-            element={<MisReservasPage reservas={reservas} perfil={perfil} onCancelar={cancelarReserva} />}
+            element={
+              <RutaProtegida>
+                <MisReservasPage />
+              </RutaProtegida>
+            }
           />
           <Route
             path="/perfil"
-            element={<PerfilPage perfil={perfil} onGuardar={guardarPerfil} onRestablecer={restablecerReservas} />}
+            element={
+              <RutaProtegida>
+                <PerfilPage />
+              </RutaProtegida>
+            }
           />
           <Route path="*" element={<NoEncontradoPage />} />
         </Routes>

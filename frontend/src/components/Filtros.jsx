@@ -22,7 +22,7 @@ function Filtros({ filtros, opciones, onCambiar, onLimpiar }) {
               id="filtro-busqueda"
               type="search"
               className="form-control"
-              placeholder="Nombre o característica (ej. WiFi)"
+              placeholder="Nombre o equipamiento (ej. WiFi)"
               value={filtros.busqueda}
               onChange={(evento) => onCambiar('busqueda', evento.target.value)}
             />
@@ -53,13 +53,13 @@ function Filtros({ filtros, opciones, onCambiar, onLimpiar }) {
           <select
             id="filtro-edificio"
             className="form-select"
-            value={filtros.edificio}
-            onChange={(evento) => onCambiar('edificio', evento.target.value)}
+            value={filtros.edificioId}
+            onChange={(evento) => onCambiar('edificioId', evento.target.value)}
           >
             <option value="">Todos</option>
             {opciones.edificios.map((edificio) => (
-              <option key={edificio} value={edificio}>
-                Edificio {edificio}
+              <option key={edificio.id} value={edificio.id}>
+                Edificio {edificio.codigo}
               </option>
             ))}
           </select>

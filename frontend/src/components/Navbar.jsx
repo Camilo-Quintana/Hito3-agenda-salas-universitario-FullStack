@@ -1,19 +1,25 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import logo from '../assets/images/logo.png'
+import { useSesion } from '../context/sesion.js'
 import './Navbar.css'
 
-const ENLACES = [
-  { ruta: '/', texto: 'Espacios', icono: 'bi-grid' },
-  { ruta: '/mis-reservas', texto: 'Mis reservas', icono: 'bi-bookmark-check' },
-  { ruta: '/perfil', texto: 'Mi perfil', icono: 'bi-person-circle' },
-]
-
-// Barra de arriba. En celular el menú se abre y se cierra con un botón.
-function Navbar({ perfil }) {
+// Barra de arriba. Los enlaces cambian según la sesión y el rol. En celular el menú se abre con un botón.
+function Navbar() {
+  const { usuario, salir } = useSesion()
   const [menuAbierto, setMenuAbierto] = useState(false)
-  const primerNombre = perfil?.nombre.split(' ')[0]
   const cerrarMenu = () => setMenuAbierto(false)
+
+  const enlaces = [{ ruta: '/', texto: 'Espacios', icono: 'bi-grid' }]
+  if (usuario) enlaces.push({ ruta: '/mis-reservas', texto: 'Mis reservas', icono: 'bi-bookmark-check' })
+  if (usuario) enlaces.push({ ruta: '/perfil', texto: 'Mi perfil', icono: 'bi-person-circle' })
+  else enlaces.push({ ruta: '/ingresar', texto: 'Ingresar', icono: 'bi-box-arrow-in-right' })
+
+  // Si estaba en una página protegida, RutaProtegida la manda al inicio
+  function cerrarSesion() {
+    cerrarMenu()
+    salir()
+  }
 
   return (
     <header className="navbar-unab">
@@ -35,9 +41,9 @@ function Navbar({ perfil }) {
         </button>
 
         <div id="menu-principal" className={`navbar-unab__menu ${menuAbierto ? 'abierto' : ''}`}>
-          {primerNombre && <span className="navbar-unab__saludo">Hola, {primerNombre}</span>}
+          {usuario && <span className="navbar-unab__saludo">Hola, {usuario.nombre.split(' ')[0]}</span>}
           <ul className="navbar-unab__enlaces">
-            {ENLACES.map((enlace) => (
+            {enlaces.map((enlace) => (
               <li key={enlace.ruta}>
                 <NavLink
                   to={enlace.ruta}
@@ -50,6 +56,14 @@ function Navbar({ perfil }) {
                 </NavLink>
               </li>
             ))}
+            {usuario && (
+              <li>
+                <button type="button" className="navbar-unab__enlace navbar-unab__salir" onClick={cerrarSesion}>
+                  <i className="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+                  Salir
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </nav>

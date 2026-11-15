@@ -7,11 +7,14 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './styles/variables.css'
 import './styles/global.css'
 import App from './App.jsx'
+import ProveedorSesion from './components/ProveedorSesion.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <ProveedorSesion>
+        <App />
+      </ProveedorSesion>
     </BrowserRouter>
   </StrictMode>,
 )

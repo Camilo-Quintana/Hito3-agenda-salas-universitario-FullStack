@@ -1,4 +1,4 @@
-// Validaciones del perfil (las mismas de la versión 1)
+// Validaciones de los formularios (las mismas reglas que la API, para avisar antes de enviar)
 
 // "12.345.678-5" -> "123456785"
 export function normalizarRut(rut) {
@@ -33,11 +33,35 @@ export function validarEmail(correo) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(correo).trim())
 }
 
-// Devuelve los errores que encuentra (si está todo bien devuelve {})
-export function validarPerfil({ nombre, correo, rut }) {
+const MENSAJE_CORREO = 'Ingresa un correo válido (por ejemplo, nombre@uandresbello.edu).'
+
+export function validarPerfil({ nombre, correo }) {
   const errores = {}
   if (nombre.trim().length < 3) errores.nombre = 'El nombre debe tener al menos 3 caracteres.'
-  if (!validarEmail(correo)) errores.correo = 'Ingresa un correo válido (por ejemplo, nombre@uandresbello.edu).'
-  if (!validarRut(rut)) errores.rut = 'RUT inválido: revisa el dígito verificador (ejemplo: 12.345.678-5).'
+  if (!validarEmail(correo)) errores.correo = MENSAJE_CORREO
   return errores
+}
+
+// Devuelve los errores que encuentra (si está todo bien devuelve {})
+export function validarRegistro({ nombre, correo, rut, password, confirmacion }) {
+  const errores = validarPerfil({ nombre, correo })
+  if (!validarRut(rut)) errores.rut = 'RUT inválido: revisa el dígito verificador (ejemplo: 12.345.678-5).'
+  if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+    errores.password = 'Usa al menos 8 caracteres, con letras y números.'
+  }
+  if (confirmacion !== password) errores.confirmacion = 'Las contraseñas no coinciden.'
+  return errores
+}
+
+export function validarIngreso({ correo, password }) {
+  const errores = {}
+  if (!validarEmail(correo)) errores.correo = MENSAJE_CORREO
+  if (!password) errores.password = 'Ingresa tu contraseña.'
+  return errores
+}
+
+// Los errores por campo que devuelve la API ({ correo: ['...'] }) al formato del formulario ({ correo: '...' })
+export function erroresDeApi(error) {
+  if (!error?.detalles) return {}
+  return Object.fromEntries(Object.entries(error.detalles).map(([campo, mensajes]) => [campo, mensajes[0]]))
 }

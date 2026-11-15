@@ -1,19 +1,17 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import CampoTexto from '../components/CampoTexto.jsx'
 import Alerta from '../components/Alerta.jsx'
-import Ventana from '../components/Ventana.jsx'
-import { formatearRut, validarPerfil } from '../utils/validaciones.js'
+import { useSesion } from '../context/sesion.js'
+import { erroresDeApi, validarPerfil } from '../utils/validaciones.js'
 
-const PERFIL_VACIO = { nombre: '', correo: '', rut: '' }
+const NOMBRE_ROL = { estudiante: 'Estudiante', admin: 'Administración' }
 
-function PerfilPage({ perfil, onGuardar, onRestablecer }) {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [valores, setValores] = useState(perfil ?? PERFIL_VACIO)
+function PerfilPage() {
+  const { usuario, actualizarPerfil, salir } = useSesion()
+  const [valores, setValores] = useState({ nombre: usuario.nombre, correo: usuario.correo })
   const [errores, setErrores] = useState({})
   const [mensaje, setMensaje] = useState(null)
-  const [confirmarRestablecer, setConfirmarRestablecer] = useState(false)
+  const [guardando, setGuardando] = useState(false)
 
   function cambiarCampo(campo, valor) {
     setValores((anteriores) => ({ ...anteriores, [campo]: valor }))
@@ -21,31 +19,23 @@ function PerfilPage({ perfil, onGuardar, onRestablecer }) {
     setMensaje(null)
   }
 
-  function guardar(evento) {
+  async function guardar(evento) {
     evento.preventDefault() // para que el navegador no recargue la página
     const encontrados = validarPerfil(valores)
     setErrores(encontrados)
     if (Object.keys(encontrados).length > 0) return
 
-    const datos = {
-      nombre: valores.nombre.trim(),
-      correo: valores.correo.trim().toLowerCase(),
-      rut: formatearRut(valores.rut),
+    setGuardando(true)
+    try {
+      const actualizado = await actualizarPerfil({ nombre: valores.nombre.trim(), correo: valores.correo.trim().toLowerCase() })
+      setValores({ nombre: actualizado.nombre, correo: actualizado.correo })
+      setMensaje({ tipo: 'exito', texto: 'Perfil guardado.' })
+    } catch (error) {
+      setErrores(erroresDeApi(error))
+      setMensaje({ tipo: 'error', texto: error.message })
+    } finally {
+      setGuardando(false)
     }
-    onGuardar(datos)
-
-    if (location.state?.volverAlGuardar) {
-      navigate(-1) // vuelve al espacio que estaba reservando
-      return
-    }
-    setValores(datos)
-    setMensaje('Perfil guardado. Ya puedes reservar.')
-  }
-
-  function restablecer() {
-    onRestablecer()
-    setConfirmarRestablecer(false)
-    setMensaje('Datos de ejemplo restablecidos.')
   }
 
   return (
@@ -53,11 +43,11 @@ function PerfilPage({ perfil, onGuardar, onRestablecer }) {
       <h1 id="titulo-perfil" className="titulo-pagina">
         Mi perfil
       </h1>
-      <p className="text-muted">Tus datos identifican tus reservas. Se guardan solo en este navegador.</p>
+      <p className="text-muted">Tus datos identifican tus reservas en el sistema.</p>
 
       {mensaje && (
-        <Alerta tipo="exito" onCerrar={() => setMensaje(null)}>
-          {mensaje}
+        <Alerta tipo={mensaje.tipo} onCerrar={() => setMensaje(null)}>
+          {mensaje.texto}
         </Alerta>
       )}
 
@@ -78,60 +68,35 @@ function PerfilPage({ perfil, onGuardar, onRestablecer }) {
               tipo="email"
               valor={valores.correo}
               error={errores.correo}
-              ayuda="Ejemplo: nombre@uandresbello.edu"
+              ayuda="Es el correo con el que inicias sesión."
               onCambiar={(valor) => cambiarCampo('correo', valor)}
               autoComplete="email"
             />
-            <CampoTexto
-              id="perfil-rut"
-              etiqueta="RUT"
-              valor={valores.rut}
-              error={errores.rut}
-              ayuda="Con o sin puntos, con guion y dígito verificador. Ejemplo: 12.345.678-5"
-              onCambiar={(valor) => cambiarCampo('rut', valor)}
-            />
-            <button type="submit" className="btn btn-primary">
-              Guardar perfil
+            <button type="submit" className="btn btn-primary" disabled={guardando}>
+              {guardando && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>}
+              Guardar cambios
             </button>
           </form>
         </div>
 
         <div className="col-12 col-lg-5">
-          <section className="panel-blanco" aria-labelledby="titulo-demo">
-            <h2 id="titulo-demo" className="h6">
-              Datos de demostración
+          <section className="panel-blanco" aria-labelledby="titulo-cuenta">
+            <h2 id="titulo-cuenta" className="h6">
+              Tu cuenta
             </h2>
-            <p className="small text-muted">
-              Vuelve a cargar las reservas de ejemplo de otros estudiantes con las fechas de hoy y mañana. Se borran las
-              demás reservas guardadas en este navegador.
-            </p>
-            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setConfirmarRestablecer(true)}>
-              <i className="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>
-              Restablecer datos de ejemplo
+            <dl className="row small mb-3">
+              <dt className="col-4">RUT</dt>
+              <dd className="col-8">{usuario.rut}</dd>
+              <dt className="col-4">Perfil</dt>
+              <dd className="col-8">{NOMBRE_ROL[usuario.rol]}</dd>
+            </dl>
+            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={salir}>
+              <i className="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+              Cerrar sesión
             </button>
           </section>
         </div>
       </div>
-
-      <Ventana
-        abierto={confirmarRestablecer}
-        titulo="¿Restablecer datos de ejemplo?"
-        onCerrar={() => setConfirmarRestablecer(false)}
-        pie={
-          <>
-            <button type="button" className="btn btn-outline-secondary" autoFocus onClick={() => setConfirmarRestablecer(false)}>
-              Cancelar
-            </button>
-            <button type="button" className="btn btn-primary" onClick={restablecer}>
-              Sí, restablecer
-            </button>
-          </>
-        }
-      >
-        <p className="mb-0">
-          Se eliminarán todas las reservas guardadas en este navegador y se cargarán las de ejemplo. Tu perfil no cambia.
-        </p>
-      </Ventana>
     </section>
   )
 }

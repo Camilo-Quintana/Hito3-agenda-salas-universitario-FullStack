@@ -138,3 +138,99 @@ body {
 .footer-unab a:hover {
   color: #fff;
 }
+
+/* =====================================================
+   HITO 3: PIEZAS NUEVAS
+===================================================== */
+
+/* Selector de día: en pantallas chicas se desplaza de lado */
+.selector-dia {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.selector-dia .btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Estado de una reserva */
+.estado-reserva {
+  font-weight: 600;
+}
+
+.estado-reserva.pendiente {
+  background: var(--color-acento-claro);
+  color: #7a5a00;
+}
+
+.estado-reserva.aprobada {
+  background: var(--color-exito-claro);
+  color: var(--color-exito);
+}
+
+.estado-reserva.rechazada {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.estado-reserva.cancelada {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+/* Línea de tiempo del historial (eventos de MongoDB) */
+.linea-tiempo {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  border-left: 2px solid var(--color-borde);
+}
+
+.linea-tiempo__item {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.linea-tiempo__item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1.25rem - 6px);
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primario);
+}
+
+.linea-tiempo__item:last-child {
+  padding-bottom: 0;
+}
+
+/* Pestañas con los colores de la marca */
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--color-primario);
+  --bs-nav-link-color: var(--color-primario);
+  --bs-nav-link-hover-color: var(--color-primario-oscuro);
+}
+
+/* Tablas de administración */
+.tabla-admin {
+  --bs-table-bg: #fff;
+  margin-bottom: 0;
+}
+
+.tabla-admin th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--color-texto-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tabla-admin td {
+  vertical-align: middle;
+}

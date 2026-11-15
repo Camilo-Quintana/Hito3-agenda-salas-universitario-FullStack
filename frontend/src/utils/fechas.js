@@ -1,4 +1,4 @@
-// Funciones de fechas. Las fechas se guardan como texto "AAAA-MM-DD" (hora del computador).
+// Funciones de fechas. Las fechas se manejan como texto "AAAA-MM-DD" (hora de Chile), igual que en la API.
 
 // Date -> "AAAA-MM-DD"
 export function aTextoFecha(fecha) {
@@ -12,14 +12,16 @@ export function fechaHoy(ahora) {
   return aTextoFecha(ahora)
 }
 
-export function fechaManana(ahora) {
-  // si es fin de mes, new Date pasa solo al mes siguiente
-  return aTextoFecha(new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1))
+// "AAAA-MM-DD" + n días -> "AAAA-MM-DD" (new Date pasa solo al mes siguiente)
+export function sumarDias(textoFecha, dias) {
+  const base = aFecha(textoFecha)
+  return aTextoFecha(new Date(base.getFullYear(), base.getMonth(), base.getDate() + dias))
 }
 
-// "hoy" | "manana" -> "AAAA-MM-DD"
-export function fechaDelDia(dia, ahora) {
-  return dia === 'manana' ? fechaManana(ahora) : fechaHoy(ahora)
+// Fechas en que se puede reservar: hoy y los "dias" siguientes (la API usa 7)
+export function fechasReservables(ahora, dias = 7) {
+  const hoy = fechaHoy(ahora)
+  return Array.from({ length: dias + 1 }, (_, i) => sumarDias(hoy, i))
 }
 
 // "AAAA-MM-DD" -> Date a medianoche
@@ -42,17 +44,12 @@ export function formatearFechaCorta(textoFecha) {
     .replace(',', '')
 }
 
+// Fecha y hora de un evento: "11-11-2026 21:35"
+export function formatearFechaHora(valor) {
+  return new Date(valor).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' })
+}
+
 // "08:00-09:00" -> "08:00 - 09:00"
 export function formatearBloque(bloque) {
   return bloque.replace('-', ' - ')
-}
-
-// ("2026-10-02", "15:00-16:00") -> { inicio: Date 15:00, fin: Date 16:00 }
-export function rangoDeBloque(textoFecha, bloque) {
-  const [horaInicio, horaFin] = bloque.split('-').map((hora) => Number(hora.slice(0, 2)))
-  const base = aFecha(textoFecha)
-  return {
-    inicio: new Date(base.getFullYear(), base.getMonth(), base.getDate(), horaInicio),
-    fin: new Date(base.getFullYear(), base.getMonth(), base.getDate(), horaFin),
-  }
 }

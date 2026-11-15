@@ -1,25 +1,28 @@
-import { fechaHoy, fechaManana, formatearFechaCorta } from '../utils/fechas.js'
+import { fechasReservables, formatearFechaCorta } from '../utils/fechas.js'
 
-// Botones Hoy y Mañana (solo se puede reservar para esos dos días)
-function SelectorDia({ dia, onCambiar, ahora, etiqueta = 'Día' }) {
-  const opciones = [
-    { valor: 'hoy', texto: 'Hoy', fecha: fechaHoy(ahora) },
-    { valor: 'manana', texto: 'Mañana', fecha: fechaManana(ahora) },
-  ]
+// Botones con los días en que se puede reservar: hoy y los 7 siguientes (regla de la API)
+function SelectorDia({ fecha, onCambiar, ahora, etiqueta = 'Día' }) {
+  const fechas = fechasReservables(ahora)
 
   return (
-    <div className="btn-group" role="group" aria-label={etiqueta}>
-      {opciones.map((opcion) => (
-        <button
-          key={opcion.valor}
-          type="button"
-          className={`btn btn-sm ${dia === opcion.valor ? 'btn-primary' : 'btn-outline-primary'}`}
-          aria-pressed={dia === opcion.valor}
-          onClick={() => onCambiar(opcion.valor)}
-        >
-          {opcion.texto} ({formatearFechaCorta(opcion.fecha)})
-        </button>
-      ))}
+    <div className="selector-dia" role="group" aria-label={etiqueta}>
+      {fechas.map((opcion, indice) => {
+        const elegida = opcion === fecha
+        let texto = formatearFechaCorta(opcion)
+        if (indice === 0) texto = `Hoy (${texto})`
+        if (indice === 1) texto = `Mañana (${texto})`
+        return (
+          <button
+            key={opcion}
+            type="button"
+            className={`btn btn-sm ${elegida ? 'btn-primary' : 'btn-outline-primary'}`}
+            aria-pressed={elegida}
+            onClick={() => onCambiar(opcion)}
+          >
+            {texto}
+          </button>
+        )
+      })}
     </div>
   )
 }
