@@ -16,7 +16,7 @@ function AdminLayout() {
         Administración
       </h1>
       <nav aria-label="Secciones de administración">
-        <ul className="nav nav-pills flex-nowrap overflow-auto my-3 pb-1">
+        <ul className="nav nav-pills admin-secciones my-3 pb-1">
           {SECCIONES.map((seccion) => (
             <li key={seccion.ruta} className="nav-item">
               <NavLink to={seccion.ruta} end={seccion.fin} className={({ isActive }) => `nav-link text-nowrap ${isActive ? 'active' : ''}`}>

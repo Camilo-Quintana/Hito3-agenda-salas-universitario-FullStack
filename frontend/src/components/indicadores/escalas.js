@@ -1,14 +1,15 @@
 // Utilidades de los gráficos de indicadores: escalas con números redondos y formatos chilenos.
 
 const numero = new Intl.NumberFormat('es-CL')
-const decimal = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 1 })
+// Los porcentajes siempre con un decimal ("9,0%" junto a "7,7%"), para que la columna se lea pareja
+const decimal = new Intl.NumberFormat('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 // 1234 -> "1.234"
 export function formatearNumero(valor) {
   return numero.format(valor)
 }
 
-// 6.25 -> "6,3%"
+// 6.25 -> "6,3%" · 9 -> "9,0%"
 export function formatearPorcentaje(valor) {
   return `${decimal.format(valor)}%`
 }
