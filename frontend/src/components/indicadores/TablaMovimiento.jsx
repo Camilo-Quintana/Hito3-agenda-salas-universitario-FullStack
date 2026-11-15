@@ -18,6 +18,8 @@ function TablaMovimiento({ dias }) {
 
   return (
     <div className="ind-tabla-desplazable">
+      {/* Son eventos de la bitácora, no estados: una reserva creada el lunes y cancelada el martes cuenta en ambos días */}
+      <p className="ind-tabla-nota">Acciones registradas cada día: reservas creadas, aprobadas, rechazadas y canceladas ese día.</p>
       <table className="table table-sm ind-tabla mb-0">
         <caption className="visually-hidden">Movimiento diario de reservas</caption>
         <thead>
