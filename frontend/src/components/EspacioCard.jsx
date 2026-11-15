@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { imagenDeEspacio } from '../utils/imagenes.js'
-import { describirUbicacion, textoCapacidad } from '../utils/textos.js'
+import { describirUbicacion, textoCapacidad, textoEquipo } from '../utils/textos.js'
 import './EspacioCard.css'
 
-// Tarjeta de un espacio. "libres" = horarios libres ese día
-function EspacioCard({ espacio, libres, dia }) {
+// Tarjeta de un espacio. "bloquesLibres" viene calculado por la API para la fecha elegida
+function EspacioCard({ espacio, fecha }) {
+  const libres = espacio.bloquesLibres ?? 0
   const hayLibres = libres > 0
   const textoLibres = libres === 1 ? '1 horario libre' : `${libres} horarios libres`
 
@@ -18,16 +19,24 @@ function EspacioCard({ espacio, libres, dia }) {
           <i className="bi bi-people me-1" aria-hidden="true"></i>
           Capacidad: {textoCapacidad(espacio.capacidad)}
         </p>
-        <ul className="lista-etiquetas" aria-label="Características">
-          {espacio.caracteristicas.map((caracteristica) => (
-            <li key={caracteristica}>{caracteristica}</li>
+        <ul className="lista-etiquetas" aria-label="Equipamiento">
+          {espacio.equipamiento.map((equipo) => (
+            <li key={equipo.id}>{textoEquipo(equipo)}</li>
           ))}
         </ul>
         <div className="mt-auto">
-          <span className={`badge espacio-card__disponibilidad ${hayLibres ? 'libre' : 'sin-libres'}`}>
-            {hayLibres ? textoLibres : 'Sin horarios libres'}
-          </span>
-          <Link to={`/espacios/${espacio.id}?dia=${dia}`} className="btn btn-primary w-100 mt-2">
+          <div className="d-flex flex-wrap gap-1">
+            <span className={`badge espacio-card__disponibilidad ${hayLibres ? 'libre' : 'sin-libres'}`}>
+              {hayLibres ? textoLibres : 'Sin horarios libres'}
+            </span>
+            {espacio.requiereAprobacion && (
+              <span className="badge espacio-card__aprobacion" title="Las reservas quedan pendientes hasta que la sede las apruebe">
+                <i className="bi bi-shield-check me-1" aria-hidden="true"></i>
+                Requiere aprobación
+              </span>
+            )}
+          </div>
+          <Link to={`/espacios/${espacio.id}?fecha=${fecha}`} className="btn btn-primary w-100 mt-2">
             Ver detalle
           </Link>
         </div>

@@ -42,6 +42,13 @@
   color: #4b5563;
 }
 
+.espacio-card__aprobacion {
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--color-acento-claro);
+  color: #7a5a00;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .espacio-card,
   .espacio-card:hover {
