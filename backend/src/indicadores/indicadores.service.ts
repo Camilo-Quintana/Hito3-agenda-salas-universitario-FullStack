@@ -12,6 +12,19 @@ function porcentaje(parte: number, total: number): number {
   return total > 0 ? Math.round((parte / total) * 1000) / 10 : 0
 }
 
+// Días de lunes a viernes entre dos fechas "AAAA-MM-DD", ambas incluidas (0 si desde > hasta)
+function contarDiasHabiles(desde: string, hasta: string): number {
+  let habiles = 0
+  for (let dia = desde; dia <= hasta; dia = sumarDias(dia, 1)) {
+    const diaSemana = aFecha(dia).getDay() // 0 = domingo, 6 = sábado
+    if (diaSemana !== 0 && diaSemana !== 6) habiles++
+  }
+  return habiles
+}
+
+// Condición SQL: la reserva cae de lunes a viernes (ISODOW: 1 = lunes ... 7 = domingo)
+const ES_DIA_HABIL = 'EXTRACT(ISODOW FROM r.fecha) < 6'
+
 @Injectable()
 export class IndicadoresService {
   constructor(
@@ -22,7 +35,10 @@ export class IndicadoresService {
 
   /**
    * Indicadores de utilización en un período. Por defecto, los últimos 30 días.
-   * Ocupación = bloques con reserva aprobada / bloques disponibles (espacios activos x 13 bloques x días).
+   * Ocupación = bloques reservados (aprobados) en días hábiles / bloques disponibles en días hábiles
+   *           = reservas aprobadas de lunes a viernes / (espacios activos x 13 bloques x días hábiles con datos).
+   * "Días con datos" empieza en la primera reserva registrada: los días anteriores a que existiera
+   * el sistema no se cuentan como bloques vacíos. Las reservas de fin de semana sí cuentan en los totales.
    */
   async calcular(desdeTexto?: string, hastaTexto?: string) {
     const hoy = aTextoFecha(new Date())
@@ -35,6 +51,14 @@ export class IndicadoresService {
 
     const rango = { desde, hasta }
     const aprobada = EstadoReserva.APROBADA
+
+    // Primera reserva registrada en el sistema: antes de esa fecha no hay datos que medir
+    const primera = await this.reservas
+      .createQueryBuilder('r')
+      .select("TO_CHAR(MIN(r.fecha), 'YYYY-MM-DD')", 'fecha')
+      .getRawOne<{ fecha: string | null }>()
+    const datosDesde = primera?.fecha && primera.fecha > desde ? primera.fecha : desde
+    const diasHabiles = contarDiasHabiles(datosDesde, hasta)
 
     // 1. Totales por estado
     const porEstadoFilas = await this.reservas
@@ -58,36 +82,50 @@ export class IndicadoresService {
       })
       .select(['e.id AS id', 'e.nombre AS nombre', 'e.tipo AS tipo', 'ed.codigo AS edificio'])
       .addSelect('COUNT(r.id)::int', 'reservas')
+      .addSelect(`(COUNT(r.id) FILTER (WHERE ${ES_DIA_HABIL}))::int`, 'reservasHabiles')
       .where('e.activo = true')
       .groupBy('e.id')
       .addGroupBy('ed.codigo')
-      .orderBy('reservas', 'DESC')
+      .orderBy('"reservasHabiles"', 'DESC')
+      .addOrderBy('reservas', 'DESC')
       .addOrderBy('e.nombre', 'ASC')
-      .getRawMany<{ id: number; nombre: string; tipo: string; edificio: string; reservas: number }>()
+      .getRawMany<{ id: number; nombre: string; tipo: string; edificio: string; reservas: number; reservasHabiles: number }>()
 
-    const bloquesPorEspacio = BLOQUES.length * dias
-    const porEspacio = porEspacioFilas.map((f) => ({ ...f, ocupacion: porcentaje(f.reservas, bloquesPorEspacio) }))
+    const bloquesPorEspacio = BLOQUES.length * diasHabiles
+    const porEspacio = porEspacioFilas.map(({ reservasHabiles, ...f }) => ({
+      ...f,
+      reservasHabiles,
+      ocupacion: porcentaje(reservasHabiles, bloquesPorEspacio),
+    }))
 
     // 3. Agrupaciones por tipo y por edificio (se calculan sobre la lista anterior)
     const agrupar = (clave: 'tipo' | 'edificio') => {
-      const grupos = new Map<string, { espacios: number; reservas: number }>()
+      const grupos = new Map<string, { espacios: number; reservas: number; reservasHabiles: number }>()
       for (const f of porEspacio) {
-        const g = grupos.get(f[clave]) ?? { espacios: 0, reservas: 0 }
+        const g = grupos.get(f[clave]) ?? { espacios: 0, reservas: 0, reservasHabiles: 0 }
         g.espacios += 1
         g.reservas += f.reservas
+        g.reservasHabiles += f.reservasHabiles
         grupos.set(f[clave], g)
       }
       return [...grupos.entries()]
-        .map(([nombre, g]) => ({ nombre, espacios: g.espacios, reservas: g.reservas, ocupacion: porcentaje(g.reservas, g.espacios * bloquesPorEspacio) }))
+        .map(([nombre, g]) => ({
+          nombre,
+          espacios: g.espacios,
+          reservas: g.reservas,
+          reservasHabiles: g.reservasHabiles,
+          ocupacion: porcentaje(g.reservasHabiles, g.espacios * bloquesPorEspacio),
+        }))
         .sort((a, b) => b.ocupacion - a.ocupacion)
     }
 
-    // 4. Demanda por bloque horario
+    // 4. Demanda por bloque horario (de lunes a viernes, la misma base que la ocupación)
     const porBloqueFilas = await this.reservas
       .createQueryBuilder('r')
       .select('r.bloque', 'bloque')
       .addSelect('COUNT(*)::int', 'reservas')
       .where('r.fecha BETWEEN :desde AND :hasta AND r.estado = :aprobada', { ...rango, aprobada })
+      .andWhere(ES_DIA_HABIL)
       .groupBy('r.bloque')
       .getRawMany<{ bloque: string; reservas: number }>()
     const porBloque = BLOQUES.map((bloque) => ({ bloque, reservas: porBloqueFilas.find((f) => f.bloque === bloque)?.reservas ?? 0 }))
@@ -109,13 +147,15 @@ export class IndicadoresService {
     }
 
     const revisadas = porEstado.aprobada + porEstado.rechazada
+    const aprobadasHabiles = porEspacio.reduce((suma, f) => suma + f.reservasHabiles, 0)
     return {
-      periodo: { desde, hasta, dias },
+      // primeraReserva: fecha de la primera reserva del sistema (null si no hay); permite saber qué períodos tienen datos
+      periodo: { desde, hasta, dias, datosDesde, diasHabiles, primeraReserva: primera?.fecha ?? null },
       totales: {
         reservas: total,
         porEstado,
         espaciosActivos: porEspacio.length,
-        ocupacionGeneral: porcentaje(porEstado.aprobada, porEspacio.length * bloquesPorEspacio),
+        ocupacionGeneral: porcentaje(aprobadasHabiles, porEspacio.length * bloquesPorEspacio),
         tasaRechazo: porcentaje(porEstado.rechazada, revisadas),
         tasaCancelacion: porcentaje(porEstado.cancelada, total),
         pendientesPorRevisar,
