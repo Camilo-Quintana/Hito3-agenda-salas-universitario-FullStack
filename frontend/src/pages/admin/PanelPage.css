@@ -1,0 +1,1152 @@
+/* =====================================================
+   PANEL DE INDICADORES
+   Tablero institucional: dos áreas lado a lado, mosaicos blancos planos con poca separación,
+   bordes finos, esquinas casi rectas y el burdeo UNAB como color de las series simples.
+===================================================== */
+.indicadores {
+  --ind-serie: var(--color-primario); /* burdeo UNAB */
+  --ind-serie-suave: rgba(122, 17, 40, 0.045); /* área bajo la línea: apenas un velo */
+  --ind-superficie: #fff;
+  --ind-borde: #e8eaee; /* gris suave para los contenedores */
+  --ind-sombra: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.04);
+  --ind-guia: #eceef1;
+  --ind-eje: #c9ccd2;
+  --ind-tinta: #1f2328;
+  --ind-tinta-2: #4b5260;
+  --ind-tinta-3: #6b7280;
+  --ind-radio: 4px;
+  /* bandas de ocupación (ver components/indicadores/bandas.js): colores explícitos de la familia burdeo,
+     sin transparencias, para que el contraste no dependa del fondo. Texto sobre cada fondo: 8:1 o más */
+  --ind-banda-baja-fondo: #f6e8eb;
+  --ind-banda-baja-texto: #5c0d1e;
+  --ind-banda-media-fondo: #dba4b0;
+  --ind-banda-media-texto: #3d0812;
+  --ind-banda-alta-fondo: var(--color-primario);
+  --ind-banda-alta-texto: #fff;
+  --ind-banda-borde: #c9909c; /* para que las muestras claras se distingan del blanco */
+  /* referencia: el dorado institucional oscurecido (5:1 sobre blanco) */
+  --ind-referencia: #8a6a0c;
+  --ind-separacion: 16px; /* espacio entre mosaicos */
+
+  color: var(--ind-tinta);
+}
+
+.indicadores.actualizando .ind-tablero {
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+/* ---------- Barra superior ---------- */
+.ind-barra {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 1.1rem 1.5rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+}
+
+/* ---------- Resumen: la acción pendiente y las dos cifras del período ---------- */
+.ind-resumen {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--ind-guia);
+}
+
+.ind-accion {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  color: #fff;
+  background: var(--ind-serie);
+  border-radius: var(--ind-radio);
+  text-decoration: none;
+  transition: background-color 0.15s ease-out;
+}
+
+.ind-accion:hover,
+.ind-accion:focus-visible {
+  color: #fff;
+  background: var(--color-primario-oscuro);
+}
+
+.ind-accion:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.ind-accion__numero {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-accion__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.ind-accion__titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ind-accion__nota {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ind-accion__flecha {
+  margin-left: auto;
+  font-size: 1.25rem;
+  transition: transform 0.15s ease-out;
+}
+
+.ind-accion:hover .ind-accion__flecha {
+  transform: translateX(3px);
+}
+
+/* sin pendientes: deja de ser un llamado y pasa a ser un estado tranquilo */
+.ind-accion--al-dia {
+  color: var(--ind-tinta);
+  background: var(--color-exito-claro);
+}
+
+.ind-accion--al-dia:hover,
+.ind-accion--al-dia:focus-visible {
+  color: var(--ind-tinta);
+  background: #c9f5d9;
+}
+
+.ind-accion--al-dia .ind-accion__numero {
+  color: var(--color-exito);
+}
+
+.ind-accion--al-dia .ind-accion__nota {
+  color: var(--ind-tinta-2);
+}
+
+.ind-cifras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+}
+
+.ind-cifras__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--ind-guia);
+}
+
+.ind-cifras dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ind-tinta-2);
+}
+
+.ind-cifras dd {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+}
+
+.ind-cifras__valor {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-cifras__detalle {
+  font-size: 0.8rem;
+  color: var(--ind-tinta-3);
+}
+
+.ind-barra__titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.ind-barra__periodo {
+  font-size: 0.85rem;
+  color: var(--ind-tinta-3);
+  margin: 0.1rem 0 0;
+}
+
+.ind-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.4rem 0.625rem;
+}
+
+.ind-filtro__etiqueta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ind-tinta-3);
+}
+
+.ind-filtro .btn {
+  border-radius: 0;
+  font-weight: 500;
+  min-width: 4.5rem;
+}
+
+.ind-filtro .btn-group > .btn:first-child {
+  border-radius: var(--ind-radio) 0 0 var(--ind-radio);
+}
+
+.ind-filtro .btn-group > .btn:last-child {
+  border-radius: 0 var(--ind-radio) var(--ind-radio) 0;
+}
+
+.ind-filtro .btn-outline-secondary {
+  --bs-btn-color: var(--ind-tinta-2);
+  --bs-btn-border-color: var(--ind-borde);
+  --bs-btn-bg: var(--ind-superficie);
+  --bs-btn-hover-bg: #f3f4f6;
+  --bs-btn-hover-color: var(--ind-tinta);
+  --bs-btn-hover-border-color: var(--ind-borde);
+}
+
+/* ---------- Composición del tablero ---------- */
+.ind-tablero {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.ind-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ind-separacion);
+  min-width: 0;
+}
+
+/* título de cada área: un encabezado, no una tarjeta */
+.ind-area__titulo {
+  margin: 0.25rem 0 -0.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ind-tinta);
+}
+
+.ind-area--ancha {
+  grid-column: 1 / -1;
+}
+
+.ind-mosaicos {
+  display: grid;
+  gap: var(--ind-separacion);
+}
+
+.ind-mosaicos--mitades {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* ---------- Mosaico de gráfico ---------- */
+.ind-panel {
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: var(--ind-sombra);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ind-panel__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.35rem 0.35rem;
+}
+
+.ind-panel__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ind-panel__subtitulo {
+  font-size: 0.8rem;
+  color: var(--ind-tinta-3);
+  margin: 0.1rem 0 0;
+}
+
+.ind-panel__cuerpo {
+  padding: 1rem 1.35rem 1.15rem;
+  flex-grow: 1;
+}
+
+.ind-vacio {
+  font-size: 0.85rem;
+  color: var(--ind-tinta-3);
+  margin: 0;
+}
+
+.ind-variacion {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ind-variacion .bi {
+  font-size: 1.1em;
+  vertical-align: -0.125em;
+}
+
+.ind-variacion.positivo {
+  color: #157347;
+}
+
+.ind-variacion.negativo {
+  color: #b42318;
+}
+
+.ind-variacion.neutro {
+  color: var(--ind-tinta-2);
+}
+
+/* ---------- Estado de las reservas (barra apilada + tasas) ---------- */
+.ind-estados__barra {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  border-radius: var(--ind-radio);
+  overflow: hidden;
+}
+
+.ind-estados__segmento {
+  flex-basis: 0;
+  min-width: 3px;
+  transition: flex-grow 0.3s ease-out;
+}
+
+.ind-estados__vacia {
+  flex-grow: 1;
+  background: var(--ind-guia);
+}
+
+.ind-estados__lista {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.ind-estados__lista li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto 4rem;
+  align-items: center;
+  column-gap: 0.25rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--ind-guia);
+}
+
+.ind-estados__nombre {
+  font-weight: 600;
+}
+
+.ind-estados__cantidad,
+.ind-estados__porcentaje {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-estados__cantidad {
+  color: var(--ind-tinta-2);
+}
+
+.ind-estados__porcentaje {
+  font-weight: 600;
+}
+
+.ind-tasas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 1.25rem 0 0;
+}
+
+.ind-tasas dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ind-tinta-2);
+}
+
+.ind-tasas dd {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin: 0.15rem 0 0;
+}
+
+.ind-tasas__valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-tasas__detalle {
+  font-size: 0.8rem;
+  color: var(--ind-tinta-3);
+}
+
+/* botón "Ver detalle por día" */
+.ind-detalle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.5rem;
+  margin-top: 0.75rem;
+  padding: 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ind-serie);
+  background: none;
+  border: 0;
+  border-radius: var(--ind-radio);
+}
+
+.ind-detalle:hover {
+  color: var(--color-primario-oscuro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ind-detalle:focus-visible {
+  outline: 2px solid var(--ind-serie);
+  outline-offset: 2px;
+}
+
+/* ---------- Barras horizontales ---------- */
+.ind-barras__fila {
+  display: grid;
+  grid-template-columns: 5.75rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 1.9rem;
+}
+
+.ind-barras__nombre {
+  font-size: 0.8rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ind-barras__pista {
+  position: relative;
+  height: 1.9rem;
+  margin-right: 2.75rem; /* lugar para el valor de la barra más larga */
+}
+
+.ind-barras__guia {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--ind-guia);
+}
+
+.ind-barras__guia:first-child {
+  background: var(--ind-eje);
+}
+
+.ind-barras__barra {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 16px;
+  transform: translateY(-50%);
+  background: var(--ind-serie);
+  border-radius: 0 4px 4px 0;
+  min-width: 1px;
+  transition: width 0.3s ease;
+}
+
+.ind-barras__valor {
+  position: absolute;
+  top: 50%;
+  transform: translate(0.35rem, -50%);
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: left 0.3s ease;
+}
+
+.ind-barras__complemento {
+  display: block;
+  /* puede pasar a dos líneas: el nombre de la fila tiene ancho fijo y este texto no debe cortarse */
+  white-space: normal;
+  line-height: 1.25;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-barras__fila--eje {
+  min-height: 1.1rem;
+}
+
+.ind-barras__eje {
+  position: relative;
+  height: 1.1rem;
+  margin-right: 2.75rem;
+}
+
+.ind-barras__eje span {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-barras__eje span:first-child {
+  transform: none;
+}
+
+/* ---------- Gráficos SVG (columnas y línea) ---------- */
+.ind-grafico {
+  position: relative;
+  width: 100%;
+}
+
+.ind-grafico svg {
+  display: block;
+  overflow: visible;
+}
+
+.ind-guia {
+  stroke: var(--ind-guia);
+  stroke-width: 1;
+}
+
+.ind-eje {
+  stroke: var(--ind-eje);
+  stroke-width: 1;
+}
+
+.ind-texto-eje {
+  font-size: 12px;
+  fill: var(--ind-tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ind-texto-eje--titulo {
+  font-size: 12px;
+}
+
+.ind-texto-valor {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--ind-tinta);
+}
+
+.ind-texto-valor--suave {
+  font-weight: 500;
+  fill: var(--ind-tinta-2);
+}
+
+.ind-columna {
+  fill: var(--ind-serie);
+  transition: opacity 0.15s;
+}
+
+.ind-columna.atenuada {
+  opacity: 0.35;
+}
+
+.ind-zona {
+  fill: transparent;
+}
+
+.ind-zona.activa {
+  fill: rgba(31, 35, 40, 0.04);
+}
+
+.ind-linea {
+  fill: none;
+  stroke: var(--ind-serie);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* el día de hoy todavía no termina: su tramo va punteado */
+.ind-linea--en-curso {
+  stroke-dasharray: 4 4;
+}
+
+/* aviso bajo el filtro de período */
+.ind-filtro__aviso {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ind-tinta-2);
+  text-align: right;
+}
+
+/* botón "Reintentar" dentro de un texto */
+.ind-reintentar {
+  margin-left: 0.4rem;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ind-serie);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ind-filtro .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ind-area-linea {
+  fill: var(--ind-serie-suave);
+}
+
+.ind-cruce {
+  stroke: var(--ind-eje);
+  stroke-width: 1;
+}
+
+.ind-punto {
+  fill: var(--ind-serie);
+  stroke: var(--ind-superficie);
+  stroke-width: 2;
+}
+
+.ind-tooltip {
+  position: absolute;
+  z-index: 2;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  color: var(--ind-tinta);
+  background: var(--ind-superficie);
+  border: 1px solid var(--ind-borde);
+  border-radius: var(--ind-radio);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.ind-tooltip strong {
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+.ind-tooltip__fila {
+  display: flex;
+  align-items: center;
+  color: var(--ind-tinta-2);
+}
+
+/* ---------- Muestra de color ---------- */
+.ind-muestra {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  vertical-align: -1px;
+  flex-shrink: 0;
+}
+
+/* ---------- Tablas ---------- */
+.ind-tabla {
+  --bs-table-bg: transparent;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ind-tinta);
+}
+
+.ind-tabla > :not(caption) > * > * {
+  padding: 0.38rem 0.5rem;
+  border-bottom-color: var(--ind-guia);
+}
+
+.ind-tabla thead th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ind-tinta-2);
+  background: #f6f7f9;
+  border-bottom: 1px solid var(--ind-eje);
+  white-space: nowrap;
+}
+
+.ind-tabla tbody th {
+  font-weight: 500;
+}
+
+.ind-tabla tfoot th,
+.ind-tabla tfoot td {
+  font-weight: 700;
+  border-top: 1px solid var(--ind-eje);
+  border-bottom: 0;
+}
+
+.ind-tabla tbody tr:hover > td,
+.ind-tabla tbody tr:hover > th:not([scope="rowgroup"]) {
+  background: #fafafb;
+}
+
+.ind-abreviatura {
+  text-decoration: none;
+  cursor: help;
+}
+
+.ind-cero {
+  color: var(--ind-tinta-3); /* 4,8:1 sobre blanco; antes #b7bcc5 (1,9:1) */
+}
+
+/* notas de definición: dicen una sola vez cómo se cuenta lo que sigue */
+.ind-area__nota,
+.ind-estados__nota,
+.ind-tabla-nota {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ind-tinta-2);
+  max-width: 70ch;
+}
+
+.ind-area__nota {
+  margin-top: 0.4rem;
+}
+
+.ind-estados__nota {
+  margin-top: 0.75rem;
+}
+
+.ind-tabla-nota {
+  margin-bottom: 0.5rem;
+}
+
+/* acciones del ranking: ver todos y exportar */
+.ind-acciones-ranking {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0 0.75rem;
+}
+
+.ind-acciones-ranking .ind-detalle {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+/* nombre del espacio en el ranking: enlace a su ficha */
+.ind-enlace-espacio {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--ind-borde);
+  text-underline-offset: 3px;
+}
+
+.ind-enlace-espacio:hover,
+.ind-enlace-espacio:focus-visible {
+  color: var(--ind-serie);
+  text-decoration-color: currentColor;
+}
+
+/* ---------- Bandas de ocupación ---------- */
+.ind-banda--baja {
+  color: var(--ind-banda-baja-texto);
+  background: var(--ind-banda-baja-fondo);
+}
+
+.ind-banda--media {
+  color: var(--ind-banda-media-texto);
+  background: var(--ind-banda-media-fondo);
+}
+
+.ind-banda--alta {
+  color: var(--ind-banda-alta-texto);
+  background: var(--ind-banda-alta-fondo);
+}
+
+/* celda del ranking: valor arriba, banda escrita abajo */
+.ind-celda-tono__banda {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* banda junto al KPI de ocupación */
+.ind-chip-banda {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.4;
+  vertical-align: 0.35em;
+  border: 1px solid var(--ind-banda-borde);
+  border-radius: 999px;
+}
+
+.ind-leyenda-bandas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ind-tinta-2);
+}
+
+.ind-leyenda-bandas ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ind-leyenda-bandas li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ind-leyenda-bandas strong {
+  font-weight: 600;
+  color: var(--ind-tinta);
+}
+
+.ind-leyenda-bandas__muestra {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1px solid var(--ind-banda-borde);
+  border-radius: 2px;
+}
+
+/* línea de referencia en las barras horizontales */
+.ind-barras__referencia {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ind-referencia);
+  box-shadow: 0 0 0 1px var(--ind-superficie); /* se distingue también donde cruza una barra burdeo */
+}
+
+.ind-barras__nota-referencia {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ind-tinta-2);
+}
+
+.ind-barras__muestra-referencia {
+  width: 2px;
+  height: 0.9rem;
+  background: var(--ind-referencia);
+}
+
+/* detalle por día: fila a todo el ancho, pero la tabla no se estira (5 columnas cortas se leen mejor juntas).
+   Sin contenedor con scroll: así el encabezado fijo funciona contra la página y no aparecen barras falsas. */
+.ind-tabla-desplazable {
+  max-width: 46rem;
+}
+
+.ind-tabla-desplazable thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.ind-detalle--cerrar {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+/* el título recibe el foco al abrir el detalle (para lectores de pantalla); sin anillo de foco con mouse */
+#titulo-detalle-diario:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* tabla del ranking: grupos plegables y celdas con tono según ocupación */
+.ind-tabla-espacios > :not(caption) > * > * {
+  padding: 0.6rem 0.65rem;
+  border-bottom-color: #e4e6ea;
+}
+
+.ind-tabla-espacios thead th {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.ind-tabla-espacios thead th:first-child {
+  border-top-left-radius: 3px;
+}
+
+.ind-tabla-espacios thead th:last-child {
+  border-top-right-radius: 3px;
+}
+
+.ind-tabla-espacios__posicion {
+  color: var(--ind-tinta-3);
+  width: 2.75rem;
+}
+
+.ind-tabla-espacios__grupo > th {
+  font-size: 0.78rem;
+  font-weight: 700 !important;
+  color: var(--ind-tinta);
+  background: #f3f4f6 !important;
+  padding-top: 0.55rem !important;
+  padding-bottom: 0.55rem !important;
+  border-bottom: 1px solid #d5d8dd !important;
+}
+
+.ind-tabla-espacios__grupo + tr > * {
+  padding-top: 0.7rem;
+}
+
+.ind-tabla-espacios__cantidad {
+  margin-left: 0.5rem;
+  font-weight: 500;
+  color: var(--ind-tinta-2);
+}
+
+.ind-tabla-espacios__nombre {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ind-celda-tono {
+  font-weight: 600;
+  width: 6rem;
+  border-bottom: 2px solid #fff !important; /* separa las celdas de color */
+}
+
+/* el fondo de la banda gana a Bootstrap y al hover de la tabla (sin !important) */
+.ind-tabla-espacios tbody tr > td.ind-celda-tono.ind-banda--baja,
+.ind-tabla-espacios tbody tr:hover > td.ind-celda-tono.ind-banda--baja {
+  color: var(--ind-banda-baja-texto);
+  background: var(--ind-banda-baja-fondo);
+}
+
+.ind-tabla-espacios tbody tr > td.ind-celda-tono.ind-banda--media,
+.ind-tabla-espacios tbody tr:hover > td.ind-celda-tono.ind-banda--media {
+  color: var(--ind-banda-media-texto);
+  background: var(--ind-banda-media-fondo);
+}
+
+.ind-tabla-espacios tbody tr > td.ind-celda-tono.ind-banda--alta,
+.ind-tabla-espacios tbody tr:hover > td.ind-celda-tono.ind-banda--alta {
+  color: var(--ind-banda-alta-texto);
+  background: var(--ind-banda-alta-fondo);
+}
+
+.ind-plegar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: #fff;
+  background: var(--ind-tinta-2);
+  border: 0;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* área de toque de 44 px alrededor del botón (el cuadro visible sigue siendo de 24 px) */
+.ind-plegar::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
+/* columnas y textos que solo existen en una de las dos vistas del ranking */
+.ind-solo-movil {
+  display: none;
+}
+
+.ind-tabla-espacios__datos {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ind-tinta-3);
+}
+
+/* pantallas táctiles: controles de al menos 44 px de alto */
+@media (pointer: coarse) {
+  .ind-filtro .btn {
+    min-height: 44px;
+  }
+
+  .ind-detalle {
+    min-height: 44px;
+  }
+}
+
+.ind-plegar:hover {
+  background: var(--ind-serie);
+}
+
+.ind-plegar:focus-visible {
+  outline: 2px solid var(--ind-serie);
+  outline-offset: 2px;
+}
+
+/* ---------- Pantallas medianas y chicas ---------- */
+@media (max-width: 1199.98px) {
+  .ind-tablero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .ind-resumen {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .ind-cifras__item:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .ind-barra {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+
+  .ind-cifras {
+    gap: 1rem;
+  }
+
+  .ind-filtro {
+    justify-content: flex-start;
+  }
+
+  .ind-filtro__aviso {
+    text-align: left;
+  }
+
+  /* detalle por día en celular: celdas compactas para que las 5 columnas quepan sin scroll lateral */
+  .ind-tabla-desplazable .ind-tabla > :not(caption) > * > * {
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+  }
+
+  .ind-tabla-desplazable .ind-muestra {
+    display: none;
+  }
+
+  .ind-cifras__item {
+    padding-left: 1rem;
+  }
+
+  .ind-cifras__valor {
+    font-size: 1.6rem;
+  }
+
+  .ind-mosaicos--mitades {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ind-col-tipo,
+  .ind-col-edif {
+    display: none;
+  }
+
+  .ind-celda-tono {
+    width: 4rem;
+  }
+
+  .ind-tabla-espacios > :not(caption) > * > * {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+
+  .ind-col-reservas {
+    width: 3.25rem;
+  }
+
+  .ind-tabla-espacios__posicion {
+    width: 1.75rem;
+  }
+
+  .ind-tabla-espacios__nombre {
+    white-space: normal;
+  }
+
+  .ind-solo-amplio {
+    display: none;
+  }
+
+  .ind-solo-movil {
+    display: inline;
+  }
+
+  .ind-tabla-espacios__datos {
+    display: block;
+    margin-top: 0.1rem;
+  }
+
+  /* el filtro de período ocupa todo el ancho: tres botones iguales, fáciles de tocar */
+  .ind-filtro {
+    flex-wrap: wrap;
+  }
+
+  .ind-filtro .btn-group {
+    flex: 1 1 auto;
+  }
+
+}

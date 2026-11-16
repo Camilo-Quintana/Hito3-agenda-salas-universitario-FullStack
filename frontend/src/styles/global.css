@@ -1,0 +1,250 @@
+/* =====================================================
+   ESTILOS GENERALES
+===================================================== */
+
+/* ESTRUCTURA DE LA PÁGINA */
+body {
+  background-color: var(--color-fondo);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-contenido {
+  flex: 1;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+.titulo-pagina {
+  color: var(--color-primario);
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+
+/* BOOTSTRAP CON NUESTROS COLORES (con sus variables, sin !important) */
+.btn-primary {
+  --bs-btn-bg: var(--color-primario);
+  --bs-btn-border-color: var(--color-primario);
+  --bs-btn-hover-bg: var(--color-primario-oscuro);
+  --bs-btn-hover-border-color: var(--color-primario-oscuro);
+  --bs-btn-active-bg: var(--color-primario-oscuro);
+  --bs-btn-active-border-color: var(--color-primario-oscuro);
+  --bs-btn-disabled-bg: var(--color-primario);
+  --bs-btn-disabled-border-color: var(--color-primario);
+  --bs-btn-focus-shadow-rgb: 122, 17, 40;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--color-primario);
+  --bs-btn-border-color: var(--color-primario);
+  --bs-btn-hover-bg: var(--color-primario);
+  --bs-btn-hover-border-color: var(--color-primario);
+  --bs-btn-active-bg: var(--color-primario);
+  --bs-btn-active-border-color: var(--color-primario);
+  --bs-btn-focus-shadow-rgb: 122, 17, 40;
+}
+
+.btn-link {
+  --bs-btn-color: var(--color-primario);
+  --bs-btn-hover-color: var(--color-primario-oscuro);
+  --bs-btn-active-color: var(--color-primario-oscuro);
+}
+
+.pagination {
+  --bs-pagination-color: var(--color-primario);
+  --bs-pagination-hover-color: var(--color-primario-oscuro);
+  --bs-pagination-focus-color: var(--color-primario-oscuro);
+  --bs-pagination-active-bg: var(--color-primario);
+  --bs-pagination-active-border-color: var(--color-primario);
+  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(122, 17, 40, 0.2);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-primario-claro);
+  box-shadow: 0 0 0 0.25rem rgba(122, 17, 40, 0.15);
+}
+
+/* PIEZAS QUE SE REPITEN */
+.panel-blanco {
+  background: #fff;
+  border-radius: var(--radio);
+  padding: 1.25rem;
+  box-shadow: var(--sombra-suave);
+}
+
+.lista-etiquetas {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.lista-etiquetas li {
+  background: #eef0f3;
+  color: #495057;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.78rem;
+}
+
+.mensaje-vacio {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.mensaje-vacio__icono {
+  font-size: 2.5rem;
+  color: var(--color-texto-muted);
+}
+
+.alerta {
+  margin: 0.75rem 0;
+}
+
+.alerta__icono {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.atribucion-clima {
+  font-size: 0.75rem;
+  color: var(--color-texto-muted);
+  margin: 0.5rem 0 0;
+}
+
+.atribucion-clima a {
+  color: inherit;
+}
+
+/* PIE DE PÁGINA */
+.footer-unab {
+  background: var(--color-primario-oscuro);
+  color: #fff;
+  padding: 1.25rem 0;
+  font-size: 0.9rem;
+}
+
+.footer-unab a {
+  color: var(--color-acento-claro);
+}
+
+.footer-unab a:hover {
+  color: #fff;
+}
+
+/* =====================================================
+   HITO 3: PIEZAS NUEVAS
+===================================================== */
+
+/* Selector de día: en pantallas chicas se desplaza de lado */
+.selector-dia {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.selector-dia .btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Estado de una reserva */
+.estado-reserva {
+  font-weight: 600;
+}
+
+.estado-reserva.pendiente {
+  background: var(--color-acento-claro);
+  color: #7a5a00;
+}
+
+.estado-reserva.aprobada {
+  background: var(--color-exito-claro);
+  color: var(--color-exito);
+}
+
+.estado-reserva.rechazada {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.estado-reserva.cancelada {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+/* Línea de tiempo del historial (eventos de MongoDB) */
+.linea-tiempo {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  border-left: 2px solid var(--color-borde);
+}
+
+.linea-tiempo__item {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.linea-tiempo__item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1.25rem - 6px);
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primario);
+}
+
+.linea-tiempo__item:last-child {
+  padding-bottom: 0;
+}
+
+/* Pestañas con los colores de la marca */
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--color-primario);
+  --bs-nav-link-color: var(--color-primario);
+  --bs-nav-link-hover-color: var(--color-primario-oscuro);
+}
+
+/* Tablas de administración */
+.tabla-admin {
+  --bs-table-bg: #fff;
+  margin-bottom: 0;
+}
+
+.tabla-admin th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--color-texto-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tabla-admin td {
+  vertical-align: middle;
+}
+
+/* Pestañas de administración: en celular pasan a varias líneas para que se vean las 5 secciones;
+   desde tablet quedan en una sola línea (con scroll lateral si no caben). */
+.admin-secciones {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .admin-secciones {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+}
